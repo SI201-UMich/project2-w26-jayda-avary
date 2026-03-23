@@ -54,8 +54,8 @@ def load_listing_results(html_path) -> list[tuple]:
         for div in title_divs:
             title = div.get_text(strip=True)
 
-            div_id = div.get('id', '')  # e.g. "title_1944564"
-            listing_id = div_id.split('_')[-1]  # e.g. "1944564"
+            div_id = div.get('id', '')  
+            listing_id = div_id.split('_')[-1]  
 
             if title and listing_id:
                 results.append((title, listing_id))
@@ -150,13 +150,19 @@ def get_listing_details(listing_id) -> dict:
 
     # Find location
 
-    location_rating = 0.0
+    location_rating = 0.0   
 
-    rating_tag = soup.find("span", class_="_17p6nbba")  
-    if rating_tag:
-        rating_str = rating_tag.get_text(strip=True)  
-        rating_str = rating_str.replace("·", "")      
-        location_rating = float(rating_str)
+    review_categories = soup.find_all("div", class_="_a3qxec")
+    for category in review_categories:
+        label_div = category.find("div", class_="_y1ba89")
+        if label_div and label_div.get_text(strip=True).lower() == "location":
+            score_span = category.find("span", class_="_4oybiu")
+            if score_span:
+                try:
+                    location_rating = float(score_span.get_text(strip=True))
+                except ValueError:
+                    pass
+            break
 
     return {
         listing_id: {
@@ -190,7 +196,22 @@ def create_listing_database(html_path) -> list[tuple]:
     # TODO: Implement checkout logic following the instructions
     # ==============================
     # YOUR CODE STARTS HERE
+    database_list = []
 
+
+    for listing_title, listing_id in load_listing_results(html_path):
+        details = get_listing_details(listing_id)[listing_id]
+        policy_number = details["policy_number"]
+        host_type = details["host_type"]
+        host_name = details["host_name"]
+        room_type = details["room_type"]
+        location_rating = details["location_rating"]
+
+        database_list.append(
+            (listing_title, listing_id, policy_number, host_type, host_name, room_type, location_rating)
+        )
+
+    return database_list
 
     # ==============================
     pass
@@ -363,8 +384,10 @@ class TestCases(unittest.TestCase):
     def test_create_listing_database(self):
         # TODO: Check that each tuple in detailed_data has exactly 7 elements:
         # (listing_title, listing_id, policy_number, host_type, host_name, room_type, location_rating)
-
+        for data in self.detailed_data:
+            self.assertEqual(len(data),7)
         # TODO: Spot-check the LAST tuple is ("Guest suite in Mission District", "467507", "STR-0005349", "Superhost", "Jennifer", "Entire Room", 4.8).
+        self.assertEqual(("Guest suite in Mission District", "467507", "STR-0005349", "Superhost", "Jennifer", "Entire Room", 4.8),self.detailed_data[-1])
         pass
 
     def test_output_csv(self):
@@ -396,7 +419,6 @@ class TestCases(unittest.TestCase):
 def main():
     detailed_data = create_listing_database(os.path.join("html_files", "search_results.html"))
     output_csv(detailed_data, "airbnb_dataset.csv")
-    print(get_listing_details(31057117))
 
 
 if __name__ == "__main__":
