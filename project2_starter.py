@@ -216,7 +216,20 @@ def output_csv(data, filename) -> None:
     # ==============================
     # YOUR CODE STARTS HERE
     # ==============================
-    pass
+    outFile = open(filename, 'w')
+    csv_writer = csv.writer(outFile)
+
+    # write header row
+    csv_writer.writerow(["Listing Title", "Listing ID", "Policy Number", "Host Type", "Host Name", "Room Type", "Location Rating"])
+
+    # sort data (by location rating)
+    sorted_data = sorted(data, key = lambda t:t[6], reverse = True)
+
+    # loops through tuple list
+    for entry in sorted_data:
+        csv_writer.writerow([entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6]])
+
+    outFile.close()
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -239,7 +252,34 @@ def avg_location_rating_by_room_type(data) -> dict:
     # ==============================
     # YOUR CODE STARTS HERE
     # ==============================
-    pass
+    
+    d = {}
+    counts = {}
+
+    for entry in data:
+
+        # gets room_type and location_rating from entry
+        room_type = entry[5]
+        location_rating = entry[6]
+
+        # prevents location ratings of 0.0 from being included
+        if location_rating == 0.0:
+            continue
+
+        if room_type not in d:
+            d[room_type] = location_rating
+            counts[room_type] = 1
+        else:
+            d[room_type] = d[room_type] + location_rating
+            counts[room_type] += 1
+    
+    # comverts values in d from totals to averages
+    for room_type in d:
+        d[room_type] = d[room_type] / counts[room_type]
+
+    return d
+
+
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -331,15 +371,21 @@ class TestCases(unittest.TestCase):
         out_path = os.path.join(self.base_dir, "test.csv")
 
         # TODO: Call output_csv() to write the detailed_data to a CSV file.
+        output_csv(create_listing_database(), "test.csv")
+
         # TODO: Read the CSV back in and store rows in a list.
+        listings = load_listing_results("test.csv")
+
         # TODO: Check that the first data row matches ["Guesthouse in San Francisco", "49591060", "STR-0000253", "Superhost", "Ingrid", "Entire Room", "5.0"].
+        self.assertEqual(self.listings[1],("Guesthouse in San Francisco", "49591060", "STR-0000253", "Superhost", "Ingrid", "Entire Room", "5.0"))
 
         os.remove(out_path)
 
     def test_avg_location_rating_by_room_type(self):
         # TODO: Call avg_location_rating_by_room_type() and save the output.
+        output = avg_location_rating_by_room_type(get_listing_details())
         # TODO: Check that the average for "Private Room" is 4.9.
-        pass
+        self.assertEqual(output["Private Room"], 4.9)
 
     def test_validate_policy_numbers(self):
         # TODO: Call validate_policy_numbers() on detailed_data and save the result into a variable invalid_listings.
