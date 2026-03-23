@@ -256,7 +256,34 @@ def avg_location_rating_by_room_type(data) -> dict:
     # ==============================
     # YOUR CODE STARTS HERE
     # ==============================
-    pass
+    
+    d = {}
+    counts = {}
+
+    for entry in data:
+
+        # gets room_type and location_rating from entry
+        room_type = entry[5]
+        location_rating = entry[6]
+
+        # prevents location ratings of 0.0 from being included
+        if location_rating == 0.0:
+            continue
+
+        if room_type not in d:
+            d[room_type] = location_rating
+            counts[room_type] = 1
+        else:
+            d[room_type] = d[room_type] + location_rating
+            counts[room_type] += 1
+    
+    # comverts values in d from totals to averages
+    for room_type in d:
+        d[room_type] = d[room_type] / counts[room_type]
+
+    return d
+
+
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -353,8 +380,9 @@ class TestCases(unittest.TestCase):
 
     def test_avg_location_rating_by_room_type(self):
         # TODO: Call avg_location_rating_by_room_type() and save the output.
+        output = avg_location_rating_by_room_type(get_listing_details())
         # TODO: Check that the average for "Private Room" is 4.9.
-        pass
+        self.assertEqual(output["Private Room"], 4.9)
 
     def test_validate_policy_numbers(self):
         # TODO: Call validate_policy_numbers() on detailed_data and save the result into a variable invalid_listings.
