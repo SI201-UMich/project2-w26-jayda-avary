@@ -99,6 +99,29 @@ def get_listing_details(listing_id) -> dict:
     # TODO: Implement checkout logic following the instructions
     # ==============================
     # YOUR CODE STARTS HERE
+    base_dir = os.path.abspath(os.path.dirname(__file__))
+    file_path = os.path.join(base_dir, "html_files", f"listing_{listing_id}.html")
+
+    with open(file_path, "r", encoding="utf-8-sig") as f:
+        html = f.read()
+
+    soup = BeautifulSoup(html, "html.parser")
+
+    # Find to policy number
+
+    policy_number = "Exempt"
+
+    text = soup.get_text()
+
+    if "pending" in text.lower():
+        policy_number = "Pending"
+    else:
+        match = re.search(r"\b(?=[A-Z0-9\-]*\d)[A-Z0-9\-]{6,}\b", text)
+        if match:
+            policy_number = match.group()
+
+    
+
     # ==============================
     pass
     # ==============================
@@ -120,6 +143,8 @@ def create_listing_database(html_path) -> list[tuple]:
     # TODO: Implement checkout logic following the instructions
     # ==============================
     # YOUR CODE STARTS HERE
+
+
     # ==============================
     pass
     # ==============================
