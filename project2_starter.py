@@ -220,7 +220,20 @@ def output_csv(data, filename) -> None:
     # ==============================
     # YOUR CODE STARTS HERE
     # ==============================
-    pass
+    outFile = open(filename, 'w')
+    csv_writer = csv.writer(outFile)
+
+    # write header row
+    csv_writer.writerow(["Listing Title", "Listing ID", "Policy Number", "Host Type", "Host Name", "Room Type", "Location Rating"])
+
+    # sort data (by location rating)
+    sorted_data = sorted(data, key = lambda t:t[6], reverse = True)
+
+    # loops through tuple list
+    for entry in sorted_data:
+        csv_writer.writerow([entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6]])
+
+    outFile.close()
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
