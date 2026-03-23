@@ -248,7 +248,7 @@ def output_csv(data, filename) -> None:
 
     # loops through tuple list
     for entry in sorted_data:
-        csv_writer.writerow([entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6]])
+        csv_writer.writerow([entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], str(entry[6])])
 
     outFile.close()
     # ==============================
@@ -394,19 +394,21 @@ class TestCases(unittest.TestCase):
         out_path = os.path.join(self.base_dir, "test.csv")
 
         # TODO: Call output_csv() to write the detailed_data to a CSV file.
-        output_csv(create_listing_database(), "test.csv")
+        output_csv(create_listing_database("html_files/search_results.html"), "test.csv")
 
         # TODO: Read the CSV back in and store rows in a list.
-        listings = load_listing_results("test.csv")
+        with open(out_path, 'r') as f:
+            reader = csv.reader(f)
+            listings = list(reader)
 
         # TODO: Check that the first data row matches ["Guesthouse in San Francisco", "49591060", "STR-0000253", "Superhost", "Ingrid", "Entire Room", "5.0"].
-        self.assertEqual(self.listings[1],("Guesthouse in San Francisco", "49591060", "STR-0000253", "Superhost", "Ingrid", "Entire Room", "5.0"))
+        self.assertEqual(listings[1],["Guesthouse in San Francisco", "49591060", "STR-0000253", "Superhost", "Ingrid", "Entire Room", "5.0"])
 
         os.remove(out_path)
 
     def test_avg_location_rating_by_room_type(self):
         # TODO: Call avg_location_rating_by_room_type() and save the output.
-        output = avg_location_rating_by_room_type(get_listing_details())
+        output = avg_location_rating_by_room_type(create_listing_database("html_files/search_results.html"))
         # TODO: Check that the average for "Private Room" is 4.9.
         self.assertEqual(output["Private Room"], 4.9)
 
