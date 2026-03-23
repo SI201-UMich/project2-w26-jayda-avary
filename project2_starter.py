@@ -341,8 +341,13 @@ class TestCases(unittest.TestCase):
         out_path = os.path.join(self.base_dir, "test.csv")
 
         # TODO: Call output_csv() to write the detailed_data to a CSV file.
+        output_csv(create_listing_database(), "test.csv")
+
         # TODO: Read the CSV back in and store rows in a list.
+        listings = load_listing_results("test.csv")
+
         # TODO: Check that the first data row matches ["Guesthouse in San Francisco", "49591060", "STR-0000253", "Superhost", "Ingrid", "Entire Room", "5.0"].
+        self.assertEqual(self.listings[1],("Guesthouse in San Francisco", "49591060", "STR-0000253", "Superhost", "Ingrid", "Entire Room", "5.0"))
 
         os.remove(out_path)
 
