@@ -41,25 +41,19 @@ def load_listing_results(html_path) -> list[tuple]:
     # ==============================
     # YOUR CODE STARTS HERE
 
-    # Step 1: Open and read the HTML file
     with open(html_path, 'r', encoding='utf-8-sig') as f:
         html = f.read()
 
-    # Step 2: Parse it with Beautiful Soup
         soup = BeautifulSoup(html, 'html.parser')
 
-    # Step 3: Find all listing links
-    # Airbnb listing links contain "/rooms/" in the href
+
         results = []
 
-        # Find all title divs with data-testid="listing-card-title"
         title_divs = soup.find_all('div', attrs={'data-testid': 'listing-card-title'})
 
         for div in title_divs:
             title = div.get_text(strip=True)
 
-        # The id attribute looks like "title_1944564"
-        # so we split on "_" and take the last part
             div_id = div.get('id', '')  # e.g. "title_1944564"
             listing_id = div_id.split('_')[-1]  # e.g. "1944564"
 
@@ -105,23 +99,30 @@ def get_listing_details(listing_id) -> dict:
     with open(file_path, "r", encoding="utf-8-sig") as f:
         html = f.read()
 
-    soup = BeautifulSoup(html, "html.parser")
+        soup = BeautifulSoup(html, "html.parser")
 
     # Find to policy number
 
     policy_number = "Exempt"
 
-    text = soup.get_text()
+    policy_div = soup.find("div", class_="_1k8vduze")
+    if policy_div:
+        lines = policy_div.get_text("\n", strip=True).split("\n")  # split into lines
 
-    if "pending" in text.lower():
-        policy_number = "Pending"
-    else:
-        match = re.search(r"\b(?=[A-Z0-9\-]*\d)[A-Z0-9\-]{6,}\b", text)
-        if match:
-            policy_number = match.group()
+        for line in lines:
+            line = line.strip()
+            # Check for STR or digits
+            if re.match(r"(STR|[0-9]{4}).*", line):
+                policy_number = line
+                break
+            elif "pending" in line.lower():
+                policy_number = "Pending"
+                break
+        
 
     # Find host type
 
+    text = soup.get_text()
     if "superhost" in text.lower():
         host_type = "Superhost"
     else:
@@ -167,11 +168,6 @@ def get_listing_details(listing_id) -> dict:
     }
         }
 
-    
-        
-
-
-    
 
     # ==============================
     pass
@@ -311,10 +307,17 @@ class TestCases(unittest.TestCase):
 
         # TODO: Call get_listing_details() on each listing id above and save results in a list.
 
+        test_list = [get_listing_details("467507"),get_listing_details("1550913"),get_listing_details("1944564"),get_listing_details("4614763"),get_listing_details("6092596")]
+
         # TODO: Spot-check a few known values by opening the corresponding listing_<id>.html files.
         # 1) Check that listing 467507 has the correct policy number "STR-0005349".
+        self.assertEqual(test_list[0]["467507"]["policy_number"],"STR-0005349")
         # 2) Check that listing 1944564 has the correct host type "Superhost" and room type "Entire Room".
+        self.assertEqual(test_list[2]["1944564"]["host_type"],"Superhost")
+        self.assertEqual(test_list[2]["1944564"]["room_type"],"Entire Room")
         # 3) Check that listing 1944564 has the correct location rating 4.9.
+        self.assertAlmostEqual(test_list[2]["1944564"]["location_rating"],4.9)
+
         pass
 
     def test_create_listing_database(self):
