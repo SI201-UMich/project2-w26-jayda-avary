@@ -41,7 +41,32 @@ def load_listing_results(html_path) -> list[tuple]:
     # ==============================
     # YOUR CODE STARTS HERE
 
-    soup = BeautifulSoup(html_path, "html.parser")
+    # Step 1: Open and read the HTML file
+    with open(html_path, 'r', encoding='utf-8-sig') as f:
+        html = f.read()
+
+    # Step 2: Parse it with Beautiful Soup
+        soup = BeautifulSoup(html, 'html.parser')
+
+    # Step 3: Find all listing links
+    # Airbnb listing links contain "/rooms/" in the href
+        results = []
+
+        # Find all title divs with data-testid="listing-card-title"
+        title_divs = soup.find_all('div', attrs={'data-testid': 'listing-card-title'})
+
+        for div in title_divs:
+            title = div.get_text(strip=True)
+
+        # The id attribute looks like "title_1944564"
+        # so we split on "_" and take the last part
+            div_id = div.get('id', '')  # e.g. "title_1944564"
+            listing_id = div_id.split('_')[-1]  # e.g. "1944564"
+
+            if title and listing_id:
+                results.append((title, listing_id))
+
+        return results
 
 
 
@@ -199,7 +224,10 @@ class TestCases(unittest.TestCase):
 
     def test_load_listing_results(self):
         # TODO: Check that the number of listings extracted is 18.
+        self.assertEqual(len(self.listings), 18)
+
         # TODO: Check that the FIRST (title, id) tuple is  ("Loft in Mission District", "1944564").
+        self.assertEqual(self.listings[0],("Loft in Mission District", "1944564"))
         pass
 
     def test_get_listing_details(self):
