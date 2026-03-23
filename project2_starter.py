@@ -40,6 +40,11 @@ def load_listing_results(html_path) -> list[tuple]:
     # TODO: Implement checkout logic following the instructions
     # ==============================
     # YOUR CODE STARTS HERE
+
+    soup = BeautifulSoup(html_path, "html.parser")
+
+
+
     # ==============================
     pass
     # ==============================
