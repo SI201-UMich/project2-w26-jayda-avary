@@ -120,6 +120,57 @@ def get_listing_details(listing_id) -> dict:
         if match:
             policy_number = match.group()
 
+    # Find host type
+
+    if "superhost" in text.lower():
+        host_type = "Superhost"
+    else:
+        host_type = "regular"
+
+    # Find host name
+
+    host_name = "" 
+    
+    host_text = soup.find(string=re.compile("Hosted by"))
+    if host_text:
+        host_name = host_text.replace("Hosted by", "").strip()
+
+    # Find room type 
+
+    room_type = "Entire Room"
+
+    subtitle = soup.find("h2")
+    if subtitle:
+        text = subtitle.get_text().lower()
+        if "private" in text:
+            room_type = "Private Room"
+        elif "shared" in text:
+            room_type = "Shared Room"
+
+    # Find location
+
+    location_rating = 0.0
+
+    rating_tag = soup.find("span", class_="_17p6nbba")  
+    if rating_tag:
+        rating_str = rating_tag.get_text(strip=True)  
+        rating_str = rating_str.replace("·", "")      
+        location_rating = float(rating_str)
+
+    return {
+        listing_id: {
+           "policy_number": policy_number,
+           "host_type": host_type, 
+           "host_name": host_name, 
+           "room_type": room_type, 
+           "location_rating": location_rating 
+    }
+        }
+
+    
+        
+
+
     
 
     # ==============================
@@ -296,6 +347,7 @@ class TestCases(unittest.TestCase):
 def main():
     detailed_data = create_listing_database(os.path.join("html_files", "search_results.html"))
     output_csv(detailed_data, "airbnb_dataset.csv")
+    print(get_listing_details(31057117))
 
 
 if __name__ == "__main__":
