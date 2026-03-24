@@ -321,7 +321,19 @@ def validate_policy_numbers(data) -> list[str]:
     # ==============================
     # YOUR CODE STARTS HERE
     # ==============================
-    pass
+    
+    # matches policy number formats
+    match_one = r"20\d{2}-00\d{4}STR"
+    match_two = r"STR-000\d{4}"
+
+    list = []
+
+    for entry in data:
+        if len(re.findall(match_one, entry[2])) == 0 and len(re.findall(match_two, entry[2])) == 0:
+            list.append(entry[1])
+
+    return list
+
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -394,7 +406,7 @@ class TestCases(unittest.TestCase):
         out_path = os.path.join(self.base_dir, "test.csv")
 
         # TODO: Call output_csv() to write the detailed_data to a CSV file.
-        output_csv(create_listing_database("html_files/search_results.html"), "test.csv")
+        output_csv(self.detailed_data, "test.csv")
 
         # TODO: Read the CSV back in and store rows in a list.
         with open(out_path, 'r') as f:
@@ -408,14 +420,15 @@ class TestCases(unittest.TestCase):
 
     def test_avg_location_rating_by_room_type(self):
         # TODO: Call avg_location_rating_by_room_type() and save the output.
-        output = avg_location_rating_by_room_type(create_listing_database("html_files/search_results.html"))
+        output = avg_location_rating_by_room_type(self.detailed_data)
         # TODO: Check that the average for "Private Room" is 4.9.
         self.assertEqual(output["Private Room"], 4.9)
 
     def test_validate_policy_numbers(self):
         # TODO: Call validate_policy_numbers() on detailed_data and save the result into a variable invalid_listings.
+        invalid_listings = validate_policy_numbers(self.detailed_data)
         # TODO: Check that the list contains exactly "16204265" for this dataset.
-        pass
+        self.assertIn("16204265", invalid_listings)
 
 
 def main():
