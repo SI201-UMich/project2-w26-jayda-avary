@@ -341,6 +341,7 @@ def validate_policy_numbers(data) -> list[str]:
 
 # EXTRA CREDIT
 def google_scholar_searcher(query):
+ 
     """
     EXTRA CREDIT
 
@@ -353,7 +354,29 @@ def google_scholar_searcher(query):
     # ==============================
     # YOUR CODE STARTS HERE
     # ==============================
-    pass
+    
+    dict = {'q' : query}
+    url = "https://scholar.google.com/scholar"
+
+    # headers = {
+        # "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36"
+    # }
+
+    response = requests.get(url, params=dict)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # find all article titles
+    articles = soup.find_all("h3", class_="gs_rt")
+
+    titles = []
+
+    for item in articles:
+        title = item.text.strip()
+        titles.append(title)
+
+    print(titles)
+
+
     # ==============================
     # YOUR CODE ENDS HERE
     # ==============================
@@ -434,6 +457,7 @@ class TestCases(unittest.TestCase):
 def main():
     detailed_data = create_listing_database(os.path.join("html_files", "search_results.html"))
     output_csv(detailed_data, "airbnb_dataset.csv")
+    google_scholar_searcher('airbnb')
 
 
 if __name__ == "__main__":
