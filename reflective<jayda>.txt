@@ -1,0 +1,19 @@
+1. Accountability of the Current System
+
+I think the current system in San Francisco provides some level of accountability, but overall it’s not strong enough. Even though hosts are supposed to register and Airbnb is supposed to show those registration numbers, the system depends a lot on people actually following the rules and reporting accurately. In reality, that doesn’t always happen. Some listings may have missing or incorrect information, and unless someone actively checks, those issues can easily slip through. It also seems like Airbnb isn’t fully responsible for verifying everything, which makes the system weaker.
+
+If I had to suggest a change, I think Airbnb should be required to verify registration numbers directly with the city before allowing a listing to be posted. That would make the system more reliable and take pressure off third parties who are trying to monitor compliance through scraping. This connects to the SWE Code of Ethics because it emphasizes honesty and responsibility—platforms shouldn’t just display information, they should make sure it’s actually correct.
+
+2. Legality of Web Scraping
+
+One factor I think is really important when it comes to the legality of web scraping is whether the data is truly public and how it’s being used. Just because something is available on a website doesn’t automatically mean it’s okay to collect it in large amounts. There are still questions about whether scraping violates terms of service or laws like the Computer Fraud and Abuse Act, especially if it involves bypassing restrictions.
+
+This matters because there’s a balance between using data for good purposes and respecting boundaries set by platforms. For example, scraping Airbnb data to check if hosts are following the law can be helpful and promote accountability. But at the same time, companies might argue that scraping their data goes against their rules. So I think legality isn’t just about access—it’s also about intent and impact.
+
+3. Ethical Guidelines for Web Scraping
+
+One guideline I think is important is respecting people’s privacy, even if the data is technically public. People might not expect their information to be collected and analyzed at a large scale, so it’s important to be careful about what data is being used and avoid anything too personal unless it’s really necessary.
+
+Another guideline is making sure that the purpose of scraping is actually beneficial and not harmful. For example, using data to hold companies accountable or improve transparency makes sense, but using it in ways that could exploit people or spread misinformation would be unethical.
+
+Overall, I think web scraping should be approached carefully. Just because you can collect data doesn’t always mean you should. It’s important to think about the bigger impact of what you’re doing.
